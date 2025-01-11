@@ -7,14 +7,26 @@ NULLABLE = {"blank": True, "null": True}
 class User(AbstractUser):
     username = None
     email = models.EmailField(unique=True, verbose_name="Email")
+    first_name = models.CharField(
+        max_length=50, verbose_name="Имя", help_text="Введите ваше имя", **NULLABLE
+    )
+    last_name = models.CharField(
+        max_length=50, verbose_name="Фамилия", help_text="Введите вашу фамилию"
+    )
+    description = models.TextField(
+        verbose_name="Описание", help_text="Введите дополнительное описание", **NULLABLE
+    )
     phone = models.CharField(
-        max_length=35, verbose_name="Телефон", help_text="Введите номер телефона"
+        unique=True,
+        max_length=35,
+        verbose_name="Телефон",
+        help_text="Введите номер телефона",
     )
     avatar = models.ImageField(
-        upload_to="users/avatars", verbose_name="Аватар", **NULLABLE
+        upload_to="users/", verbose_name="Аватар", **NULLABLE
     )
 
-    USERNAME_FIELD = "email"
+    USERNAME_FIELD = "phone"
     REQUIRED_FIELDS = []
 
     class Meta:
@@ -22,4 +34,4 @@ class User(AbstractUser):
         verbose_name_plural = "Пользователи"
 
     def __str__(self):
-        return self.email
+        return self.first_name
