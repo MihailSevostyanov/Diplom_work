@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+{% extends 'profitpages/base.html'%}
+{% load my_tags %}
+{% load static %}
+{% block content %}
+
+
+<div class="row text-right">
+    <div class="col-12">
+
+        <div class="card mb-3 box-shadow">
+            <div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active"
+                            aria-current="true"
+                            aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1"
+                            aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2"
+                            aria-label="Slide 3"></button>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"
+                             aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false">
+                            <rect width="100%" height="100%" fill="#777"/>
+                        </svg>
+
+                        <div class="container">
+                            <div class="carousel-caption text-start">
+                                <h1>Твоя платформа монетизации</h1>
+                                <p>Загрузи свой контент на платформу</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"
+                             aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false">
+                            <rect width="100%" height="100%" fill="#777"/>
+                        </svg>
+
+                        <div class="container">
+                            <div class="carousel-caption">
+                                <h1>Зарабатывай в два клика</h1>
+                                <p>Опубликуй контент для других</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"
+                             aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false">
+                            <rect width="100%" height="100%" fill="#777"/>
+                        </svg>
+
+                        <div class="container">
+                            <div class="carousel-caption text-end">
+                                <h1>Получай прибыль уже сегодня</h1>
+                                <p>Монетизируй свои публикации</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="card mb-3 box-shadow">
+
+            <div class="card-body">
+
+                <p class="card-text">
+
+                <h1 class="card-title  text-center">
+                    <img
+                            src="{% static 'image/main.png' %}"
+                            alt="Main page"
+                            height="100px"
+                            width="100px">
+                    <br>
+
+                </h1>
+                </p>
+
+                <p class="lead">
+
+                    {% if user.is_authenticated %}
+                <div style="color: green">
+                    <label>Добро пожаловать, <b>{{user.first_name}}</b>.
+                        <br>Ваши полномочия:
+                        {% if user.is_superuser %}
+                        <b>суперпользователь</b>.
+                        {% endif %}
+                        {% if user.is_staff and user.is_superuser == False%}
+                        <b>персонал сайта (is staff)</b>.
+                        {% endif %}
+                        {% if user.is_staff == False and user.is_superuser == False %}
+                        <b>пользователь</b>.
+                        {% endif %}
+                    </label>
+
+                    {% else %}
+                    <label>Вы находитесь на сайте как <b>анонимный пользователь</b>. </label>
+                    {% endif %}
+                </div>
+
+                </p>
+                {% if not user.is_authenticated %}
+                <p><a type="button" class="btn btn-outline-primary" href="{% url 'users:login' %}">Войти</a></p>
+                {% else %}
+                <div class="d-grid gap-1">
+                    <button type="button" class="btn btn-outline-info">Мой профиль</button>
+                    <button type="button" class="btn btn-outline-info">Info</button>
+                </div>
+                <br>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-9">
+        <div class="card mb-3 box-shadow">
+            <div class="container marketing infinite-container">
+
+                {% for pub in publications %}
+                <div class="card">
+                    {% if pub.preview %}
+                    <div class="card text-bg-dark">
+                        <img class="img-thumbnail"
+                             class="card-img-top"
+                             src="{{ pub.preview | media_filter }}"
+                             alt="Card image"
+                             height="300px"
+                             width="300px"
+                        >
+                        <div class="card" style="width: 18rem;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ pub.title }}</h5>
+                                <h6 class="card-subtitle mb-2 text-body-secondary">автор: {{ pub.publisher }}</h6>
+                                <p class="card-text">{{ pub.description }}</p>
+                                <a href="#" class="card-link">Ссылка карточки</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ pub.title }}</h5>
+                    <p class="card-text">{{ pub.description }}</p>
+                    <p class="card-text">автор: {{ pub.publisher }}</p>
+                    <a href="#" class="btn btn-outline-primary">Читать</a>
+                    {% endif %}
+
+                </div>
+                {% endfor %}
+
+
+                {% if not publications %}
+                <h2>Ничего не найдено.</h2>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

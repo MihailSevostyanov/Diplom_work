@@ -5,5 +5,13 @@ from users.models import User
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'email', )
-    search_fields = ('username', 'email')
+    list_display = (
+        "email",
+        "first_name",
+        "last_name",
+        "is_superuser",
+        "is_staff",
+        "phone",
+        "pk",
+    )
+    list_filter = ("email", "is_superuser")
