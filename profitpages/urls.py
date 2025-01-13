@@ -7,7 +7,7 @@ from profitpages.views import (
     PublisherListView,
     PublisherCreateView,
     PublisherUpdateView,
-    PublisherDeleteView,
+    PublisherDeleteView, PublicationCreateView,
 )
 
 app_name = ProfitpagesConfig.name
@@ -15,8 +15,10 @@ app_name = ProfitpagesConfig.name
 
 urlpatterns = [
     path("", PublicationListView.as_view(), name="main"),
+    path("publication/create/", PublicationCreateView.as_view(), name="publication_create"),
+
     path("publisher/", PublisherListView.as_view(), name="publisher_list"),
-    path("publisher/create", PublisherCreateView.as_view(), name="publisher_create"),
+    path("publisher/", PublisherCreateView.as_view(), name="publisher_create"),
     path(
         "publisher/update/<int:pk>",
         PublisherUpdateView.as_view(),
