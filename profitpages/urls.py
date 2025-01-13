@@ -8,6 +8,8 @@ from profitpages.views import (
     PublicationDetailView,
     PublicationUpdateView,
     PublicationDeleteView,
+
+    PublicationAuthorlistView,
 )
 
 app_name = ProfitpagesConfig.name
@@ -19,5 +21,6 @@ urlpatterns = [
     path("publication/detail/<int:pk>/", PublicationDetailView.as_view(), name="publication_detail"),
     path("publication/update/<int:pk>/", PublicationUpdateView.as_view(), name="publication_update"),
     path("publication/delete/<int:pk>/", PublicationDeleteView.as_view(), name="publication_delete"),
-    
+
+    path("author/<int:pk>/publications/", PublicationAuthorlistView.as_view(), name="publication_author")
 ]

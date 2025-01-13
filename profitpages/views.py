@@ -1,5 +1,5 @@
 from django.http import JsonResponse, Http404
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import (
     TemplateView,
@@ -14,6 +14,7 @@ from django_ckeditor_5.views import image_verify, NoImageException, handle_uploa
 from config import settings
 from profitpages.forms import PublicationForm
 from profitpages.models import Publisher, Publication
+from users.models import User
 
 
 class PublicationListView(ListView):
@@ -65,6 +66,17 @@ class PublicationDeleteView(DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('profitpages:main')
+
+
+class PublicationAuthorlistView(ListView):
+    context_object_name = 'publications'
+    template_name = "profitpages/home.html"
+    paginate_by = 5
+
+    def get_queryset(self):
+        author_id = self.kwargs.get('pk')
+        author = get_object_or_404(Publisher, pk=author_id)
+        return Publication.objects.filter(publisher=author).order_by('-updated_at')
 
 
 class PublisherListView(ListView):
