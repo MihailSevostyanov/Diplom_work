@@ -6,36 +6,44 @@ from django.views.generic import (
     ListView,
     CreateView,
     UpdateView,
-    DeleteView,
+    DeleteView, DetailView,
 )
 from django_ckeditor_5.forms import UploadFileForm
 from django_ckeditor_5.views import image_verify, NoImageException, handle_uploaded_file
 
 from config import settings
 from profitpages.forms import PublicationForm
-from profitpages.models import Publisher, Content
+from profitpages.models import Publisher, Publication
 
 
 class PublicationListView(ListView):
-    model = Content
+    model = Publication
     template_name = "profitpages/home.html"
     context_object_name = "publications"
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = "Home Page"
         return context
 
+
 class PublicationCreateView(CreateView):
-    model = Content
+    model = Publication
     form_class = PublicationForm
-    template_name = "profitpages/content_form.html"
+    template_name = "profitpages/publication_form.html"
     success_url = reverse_lazy('profitpages:main')
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
+
+
+class PublicationDetailView(DetailView):
+    model = Publication
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        return context_data
 
 
 class PublisherListView(ListView):
@@ -73,5 +81,3 @@ def upload_file(request):
             url = handle_uploaded_file(request.FILES["upload"])
             return JsonResponse({"url": url})
     raise Http404(_("Page not found"))
-
-
