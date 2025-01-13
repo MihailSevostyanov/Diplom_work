@@ -25,6 +25,7 @@ class User(AbstractUser):
     avatar = models.ImageField(
         upload_to="users/", verbose_name="Аватар", **NULLABLE
     )
+    created_at = models.DateField(verbose_name='Дата создания профиля', auto_now_add=True, **NULLABLE)
 
     USERNAME_FIELD = "phone"
     REQUIRED_FIELDS = []

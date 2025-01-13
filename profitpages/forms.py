@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from django_ckeditor_5.widgets import CKEditor5Widget
 
-from profitpages.models import Content
+from profitpages.models import Publication
 
 
 class PublicationForm(ModelForm):
@@ -16,5 +16,5 @@ class PublicationForm(ModelForm):
         self.fields["content"].required = False
 
     class Meta:
-        model = Content
+        model = Publication
         fields = ("title", "description", "preview", "content", "publisher")
