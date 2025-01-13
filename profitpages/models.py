@@ -1,4 +1,5 @@
 from django.db import models
+from django_ckeditor_5.fields import CKEditor5Field
 
 from users.models import User
 
@@ -52,6 +53,7 @@ class Content(models.Model):
     )
     paid = models.BooleanField(default=False, help_text="Укажите тип контента:(Платный/Бесплатный)", verbose_name="Платный")
     preview = models.ImageField(upload_to="publication/preview", verbose_name="Превью", help_text="Загрузите превью публикации", **NULLABLE)
+    content = CKEditor5Field(verbose_name='содержание публикации', config_name='extends', **NULLABLE)
 
     class Meta:
         verbose_name = "Публикация"
