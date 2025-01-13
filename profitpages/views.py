@@ -46,6 +46,27 @@ class PublicationDetailView(DetailView):
         return context_data
 
 
+class PublicationUpdateView(UpdateView):
+    model = Publication
+    form_class = PublicationForm
+
+    def get_success_url(self):
+        return reverse_lazy('profitpages:publication_detail', args=[self.object.id])
+
+    # def get_object(self, queryset=None):
+    #     obj = super().get_object()
+    #     if obj.owner != self.request.user:
+    #         raise Http404(_("Разрешено изменять только свои публикации"))
+    #     return obj
+
+
+class PublicationDeleteView(DeleteView):
+    model = Publication
+
+    def get_success_url(self):
+        return reverse_lazy('profitpages:main')
+
+
 class PublisherListView(ListView):
     model = Publisher
 

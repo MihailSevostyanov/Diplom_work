@@ -12,7 +12,9 @@
                     <strong class="d-inline-block mb-2 text-info"><span class="badge rounded-pill text-bg-info">ВСЕ СТАТЬИ АВТОРА</span></strong>
                     <h3 class="mb-0">{{ object.publisher }}</h3>
                     <div class="mb-1 text-muted">Пользователь с {{ object.publisher.user.created_at }}</div>
-                    <p><a href="#" class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Посмотреть все статьи автора</a></p>
+                    <p><a href="#"
+                          class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Посмотреть
+                        все статьи автора</a></p>
                 </div>
                 <div class="col-auto d-none d-lg-block">
                     {% if object.publisher.user.avatar %}
@@ -32,32 +34,34 @@
                     <div class="mb-1 text-muted">{{ object.publisher.description }}</div>
                 </div>
             </div>
-        </div>
-    </div>
-    {% if object.publisher.email == user.email %}
-    <hr class="dropdown-divider">
-    <ul class="list-unstyled mb-0" style="display: flex;justify-content: space-between;">
-        <li>
-            <a type="button" class="btn btn-warning" href="#">
-                Редактировать
-            </a>
-        </li>
-        <li>
-            <a type="button" class="btn btn-danger" href="#">
-                Удалить
-            </a>
-        </li>
-    </ul>
-    {% endif %}
+            <div class="d-grid gap-1">
 
-    <div class="row g-5">
-        <h1 class="pb-4 mb-4 fst-italic border-bottom" style="text-align: center;">
-            {{ object.title }}
-        </h1>
-        <div class="ck-content">
-            <p> {{ object.content|safe }} </p>
+                <hr class="dropdown-divider">
+                <ul class="list-unstyled mb-0" style="display: flex;justify-content: space-between;">
+                    <li>
+                        <a type="button" class="btn btn-warning" href="{% url 'profitpages:publication_update' pk=object.pk %}">
+                            Редактировать статью
+                        </a>
+                    </li>
+                    <li>
+                        <a type="button" class="btn btn-danger" href="{% url 'profitpages:publication_delete' pk=object.pk %}">
+                            Удалить статью
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            </div>
         </div>
-    </div>
-    <hr class="dropdown-divider">
+
+        <div class="row g-5">
+            <h1 class="pb-4 mb-4 fst-italic border-bottom" style="text-align: center;">
+                {{ object.title }}
+            </h1>
+            <div class="ck-content">
+                <p> {{ object.content|safe }} </p>
+            </div>
+        </div>
+        <hr class="dropdown-divider">
 </main>
 {% endblock %}
