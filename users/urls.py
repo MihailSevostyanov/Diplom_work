@@ -2,7 +2,7 @@ from django.contrib.auth.views import LogoutView
 from django.urls import path, include
 
 from users.apps import UsersConfig
-from users.views import UserCreateView, UserLoginView, RegisterView
+from users.views import UserCreateView, UserLoginView, RegisterView, payment_success, payment_cancel
 
 app_name = UsersConfig.name
 

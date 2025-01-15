@@ -6,7 +6,12 @@
 
 <div class="container mt-3 d-flex justify-content-center">
     <div class="col-lg-8 col-sm-12">
-        <h2>Добавление Публикации</h2>
+        <h2>{% if object %}
+            Редактирование публикации: {{ object.title }}
+            {% else %}
+            Создание пубоикации
+            {% endif %}
+        </h2>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.media }}

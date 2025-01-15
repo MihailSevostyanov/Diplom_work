@@ -97,3 +97,10 @@ class RegisterView(CreateView):
         return render(
             request, "users/register.html", {"form": form, "sms_required": True}
         )
+
+
+def payment_success(request):
+    return render(request, 'users/payment_success.html')
+
+def payment_cancel(request):
+    return render(request, 'users/payment_cancel.html')

@@ -56,6 +56,7 @@ class Publication(models.Model):
     preview = models.ImageField(upload_to="publication/preview", verbose_name="Превью", help_text="Загрузите превью публикации", **NULLABLE)
     content = CKEditor5Field(verbose_name='содержание публикации', config_name='extends', **NULLABLE)
     updated_at = models.DateTimeField(verbose_name="дата последнего изменения", auto_now=True, **NULLABLE)
+    link = models.CharField(max_length=150, verbose_name="ссылка на видео", help_text="Укажите ссылку на видео", **NULLABLE)
 
     class Meta:
         verbose_name = "Публикация"
