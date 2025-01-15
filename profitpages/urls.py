@@ -10,8 +10,9 @@ from profitpages.views import (
     PublicationDeleteView,
 
     PublicationAuthorlistView, PublisherCreateView, PublisherDetailView, PublisherUpdateView, PublisherDeleteView,
-    PublisherListView,
+    PublisherListView, buy_subscription,
 )
+from users.views import payment_success, payment_cancel
 
 app_name = ProfitpagesConfig.name
 
@@ -24,10 +25,14 @@ urlpatterns = [
     path("publication/delete/<int:pk>/", PublicationDeleteView.as_view(), name="publication_delete"),
 
     path("author/<int:pk>/publications/", PublicationAuthorlistView.as_view(), name="publication_author"),
+    path("subscription/", buy_subscription, name="subscription_create"),
+    path('payment_success/', payment_success, name='payment_success'),
+    path('payment_cancel/', payment_cancel, name='payment_cancel'),
 
     path("publisher/", PublisherListView.as_view(), name="publisher_list"),  # TODO: add search functionality!
     path("publisher/create/", PublisherCreateView.as_view(), name="publisher_create"),
     path("publisher/detail/<int:pk>/", PublisherDetailView.as_view(), name="publisher_detail"),
     path("publisher/update/<int:pk>/", PublisherUpdateView.as_view(), name="publisher_update"),
     path("publisher/delete/<int:pk>/", PublisherDeleteView.as_view(), name="publisher_delete"),
+
 ]

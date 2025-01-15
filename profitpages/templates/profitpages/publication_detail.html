@@ -16,7 +16,8 @@
                           class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Посмотреть
                         все статьи автора</a></p>
                     <p><a href="{% url 'profitpages:publisher_detail' pk=object.publisher.pk %}"
-                          class="link-warning link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Профиль автора</a></p>
+                          class="link-warning link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Профиль
+                        автора</a></p>
                 </div>
                 <div class="col-auto d-none d-lg-block">
                     {% if object.publisher.user.avatar %}
@@ -41,29 +42,30 @@
                 <hr class="dropdown-divider">
                 <ul class="list-unstyled mb-0" style="display: flex;justify-content: space-between;">
                     <li>
-                        <a type="button" class="btn btn-warning" href="{% url 'profitpages:publication_update' pk=object.pk %}">
+                        <a type="button" class="btn btn-warning"
+                           href="{% url 'profitpages:publication_update' pk=object.pk %}">
                             Редактировать статью
                         </a>
                     </li>
                     <li>
-                        <a type="button" class="btn btn-danger" href="{% url 'profitpages:publication_delete' pk=object.pk %}">
+                        <a type="button" class="btn btn-danger"
+                           href="{% url 'profitpages:publication_delete' pk=object.pk %}">
                             Удалить статью
                         </a>
                     </li>
                 </ul>
             </div>
 
-            </div>
         </div>
-
-        <div class="row g-5">
-            <h1 class="pb-4 mb-4 fst-italic border-bottom" style="text-align: center;">
-                {{ object.title }}
-            </h1>
-            <div class="ck-content">
-                <p> {{ object.content|safe }} </p>
-            </div>
+    </div>
+    <div class="row g-5">
+        <h1 class="pb-4 mb-4 fst-italic border-bottom" style="text-align: center;">
+            {{ object.title }}
+        </h1>
+        <div class="ck-content">
+            <p> {{ object.content|safe }} </p>
         </div>
-        <hr class="dropdown-divider">
+    </div>
+    <hr class="dropdown-divider">
 </main>
 {% endblock %}

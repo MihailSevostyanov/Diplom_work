@@ -36,3 +36,17 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.first_name
+
+
+class Payment(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, verbose_name="Пользователь", related_name="payments", **NULLABLE)
+    price = models.PositiveIntegerField(verbose_name="сумма оплаты")
+    session_id = models.CharField(max_length=300, verbose_name="id сессии")
+    is_paid = models.BooleanField(default=False, verbose_name="Статус прохождения платежа")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания платежа")
+    paid_it = models.DateTimeField(verbose_name="Дата оплаты", **NULLABLE)
+
+    class Meta:
+        verbose_name = "Платеж"
+        verbose_name_plural = "Платежи"

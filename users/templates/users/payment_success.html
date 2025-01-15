@@ -1,0 +1,10 @@
+{% extends 'profitpages/base.html' %}
+{% block content %}
+<div class="alert alert-success" role="alert">
+  Спасибо за покупку!
+  <a
+      href="{% url 'profitpages:main' %}"
+      >Вернуться на главную</a
+    >
+</div>
+{% endblock content %}

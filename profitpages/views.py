@@ -1,4 +1,4 @@
-from importlib.resources._common import _
+from django.utils.translation import gettext_lazy as _
 
 from django.http import JsonResponse, Http404
 from django.shortcuts import render, get_object_or_404
@@ -14,9 +14,11 @@ from django_ckeditor_5.forms import UploadFileForm
 from django_ckeditor_5.views import image_verify, NoImageException, handle_uploaded_file
 
 from config import settings
+from config.special_elements import PRICE_MONTH, PRICE_6_MONTH, PRICE_YEAR
 from profitpages.forms import PublicationForm, PublisherForm
 from profitpages.models import Publisher, Publication
-from users.models import User
+from profitpages.services import new_create_stripe_session
+from users.models import User, Payment
 
 
 class PublicationListView(ListView):
@@ -139,3 +141,47 @@ def upload_file(request):
             url = handle_uploaded_file(request.FILES["upload"])
             return JsonResponse({"url": url})
     raise Http404(_("Page not found"))
+
+
+def buy_subscription(request):
+    price_month = PRICE_MONTH
+    price_6_month = PRICE_6_MONTH
+    price_year = PRICE_YEAR
+
+    total_price_6_month = price_6_month * 6
+    total_price_year = price_year * 12
+
+    id_session_month, url_month = new_create_stripe_session(price_month)
+    Payment.objects.create(
+        user=request.user,
+        session_id=id_session_month,
+        price=price_month,
+    )
+    id_session_6_month, url_6_month = new_create_stripe_session(total_price_6_month)
+    Payment.objects.create(
+        user=request.user,
+        session_id=id_session_6_month,
+        price=total_price_6_month,
+    )
+    id_session_year, url_year = new_create_stripe_session(total_price_year)
+    Payment.objects.create(
+        user=request.user,
+        session_id=id_session_year,
+        price=total_price_year,
+    )
+
+    context = {
+        'price_month': price_month,
+        'price_6_month': price_6_month,
+        'price_year': price_year,
+
+        'total_price_6_month': total_price_6_month,
+        'total_price_year': total_price_year,
+
+        'url_month': url_month,
+        'url_6_month': url_6_month,
+        'url_year': url_year,
+
+    }
+    return render(request, 'profitpages/subscription_create.html', context)
+
