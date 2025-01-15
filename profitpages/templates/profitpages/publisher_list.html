@@ -1,172 +1,110 @@
-{% extends 'restaurant/base.html'%}
+<!DOCTYPE html>
+{% extends 'profitpages/base.html'%}
+{% load my_tags %}
 {% load static %}
 {% block content %}
-{% load my_tags %}
-
 
 <div class="row text-right">
+        <div class="col-3">
+            <div class="card mb-3 box-shadow">
 
-    <div class="col-12">
+                <div class="card-body">
 
-        <div class="card mb-3 box-shadow">
+                    <p class="card-text">
 
-
-            <div class="card-body">
-
-                <p class="card-text">
-
-                <h1 class="card-title  text-center">
-                    <img
-                            src="{% static 'image/news-paper-svgrepo-com.svg' %}"
-                            alt="Hungry Shark. History of booking."
-                            height="100px"
-                            width="100px"/>
-                    <br>
-
-                    <div style="color: blue ">История бронирований</div>
-                </h1>
-                </p>
-                <hr>
-
-
-                <p class="lead">
-
-
-                <h5 class="card-title">
-                    <div style="color: orange"><b>{{user.name}}</b></div>
-                </h5>
-
-                <img src="{{ user.avatar|user_media_filter }}" width="100"
-                     alt={{user.avatar|user_media_filter}}> <br>
-                <b>Имя:</b> {{user.name}} <br>
-                <b>Email:</b> {{user.email}} <br>
-                <b>Телефон:</b> {{user.phone_number}} <br>
-                <b>Телеграм:</b> {{user.tg_nick}} {{user.tg_chat_id}}<br>
-
-                <hr>
-
-                <h5 class="card-title">
-                    <div style="color: orange"><b>Список бронирований пользователя:</b></div>
-
-                </h5>
-                <br>
-
-
-                <table class="table table-stripped">
-                    <tr>
-                        <th>Столик</th>
-
-                        <th>Дата</th>
-                        <th>Время</th>
-
-                        <th>Напомнить за</th>
-                        <th>Дата создания</th>
-
-                        <th>Активно</th>
-                        <th>Информация</th>
-                        <th>Изменить</th>
-                        <th>Удалить</th>
-
-
-                    </tr>
-
-                    {% for object in booking_list %}
-                    <tr>
-
-
-                        <td>{{object.table}}, &nbsp; {{object.places}} места</td>
-
-                        <td>{{object.date_field}}</td>
-                        <td>{{object.time_start}} - {{object.time_end}}</td>
-
-                        <td>
-                            {% if object.notification == 0 %}
-                            ---
-                            {% else %}
-                            {% if object.notification == 1 %}
-                            {{object.notification}} час
-                            {% else %}
-                            {{object.notification}} часа
-                            {% endif %}
-                            {%endif%}
-
-
-                        </td>
-                        <td>{{ object.created_at|time_to_local:time_offset }}</td>
-
-
-                        <td>
-                            <a class="btn btn-primary" href="{%url 'restaurant:booking_detail' object.pk%}"
-                               role="button">Информация</a>
-                        </td>
-
-
-                        {%if object.date_field|has_been:object.time_start %}
-
-                        <td>
-                            <a class="btn btn-secondary disabled"
-                               role="button" aria-disabled="true" href="{%url 'restaurant:booking_activity' object.pk%}"
-                            >&nbsp;Прошло &nbsp; &nbsp;</a>
-                        </td>
-
-                        <td>
-                            <a class="btn btn-secondary disabled" href="#"
-                               role="button" aria-disabled="true">Изменить</a>
-                            </a>
-
-                        </td>
-
-
+                    <h1 class="card-title  text-center">
+                        {% if user.avatar %}
+                        <img class="bd-placeholder-img" width="250" height="250"
+                             src="{{ user.avatar|media_filter }}">
                         {% else %}
-
-
-                        <td>
-                            {%if object.active %}
-                            <a class="btn btn-success" href="{%url 'restaurant:booking_activity' object.pk%}"
-                               role="button">Отменить&nbsp;</a>
-                            {% else %}
-                            <a class="btn btn-secondary disabled"
-                               role="button" aria-disabled="true" href="{%url 'restaurant:booking_activity' object.pk%}"
-                            >Неактивно</a>
-
-                            {%endif%}
-                        </td>
-
-                        <td>
-                            <a class="btn btn-primary" href="{%url 'restaurant:booking_update' object.pk%}"
-                               role="button">Изменить</a>
-                        </td>
-
+                        {% if user.is_authenticated %}
+                        <img src="{% static 'image/main.png' %}"
+                             alt="Main page"
+                             height="100px"
+                             width="100px">
+                        {% else %}
+                        <img src="{% static 'image/not_authorized.jpg' %}"
+                             alt="Main page"
+                             height="200px"
+                             width="200px">
+                        {% endif %}
 
                         {% endif %}
-                        <td>
-                            <a class="btn btn-primary" href="{%url 'restaurant:booking_delete' object.pk%}"
-                               role="button">Удалить</a>
-                        </td>
 
+                    </h1>
+                    </p>
 
-                        {% endfor %}
+                    <p class="lead">
+                        {% if user.is_authenticated %}
+                    <div style="color: green">
+                        <label>Добро пожаловать, <b>{{user.first_name}}</b>.
+                            <br>Ваши полномочия:
+                            {% if user.is_superuser %}
+                            <b>суперпользователь</b>.
+                            {% endif %}
+                            {% if user.is_staff and user.is_superuser == False%}
+                            <b>персонал сайта (is staff)</b>.
+                            {% endif %}
+                            {% if user.is_staff == False and user.is_superuser == False %}
+                            <b>пользователь</b>.
+                            {% endif %}
+                        </label>
 
-                </table>
-
-                <div class="btn-group">
-                    <a class="p-2 btn btn-outline-primary" href="{% url 'restaurant:main' %}" role="button">На главную
-                        страницу</a>
-                    &nbsp;
-                    <a class="p-2 btn btn-outline-primary" href="{% url 'restaurant:booking_create' %}" role="button">Добавить
-                        бронирование</a>
-
-
+                        {% else %}
+                        <label>Вы находитесь на сайте как анонимный пользователь.</label>
+                        {% endif %}
+                    </div>
+                    </p>
+                    {% if not user.is_authenticated %}
+                    <div class="d-grid gap-1 col-6 mx-auto">
+                        <a type="button" class="btn btn-outline-primary" href="{% url 'users:login' %}">Войти</a>
+                    </div>
+                    <br>
+                    {% else %}
+                    <div class="d-grid gap-1">
+                        <a type="button" class="btn btn-outline-info" href="{% url 'profitpages:publisher_detail' pk=user.pk %}">Мой профиль</a>
+                        <a type="button" class="btn btn-outline-info" href="{% url 'profitpages:publication_author' pk=user.pk %}" >Мои публикации</a>
+                        <a type="button" class="btn btn-outline-warning" href="{% url 'profitpages:publisher_list' %}">Все
+                            авторы</a>
+                        <a type="button" class="btn btn-outline-success"
+                           href="{% url 'profitpages:publication_create' %}">Создать публикацию
+                        </a>
+                    </div>
+                    {% endif %}
                 </div>
+            </div>
+        </div>
+<div class="col-9">
+
+    {% for publisher in publishers %}
 
 
-                </p>
-
-
+    <div class="card mb-3" style="max-width: 1000px;">
+        <div class="row g-0">
+            <div class="col-md-4">
+                {% if publisher.user.avatar %}
+                <img class="card-img-top"
+                     src="{{ publisher.user.avatar | media_filter }}"
+                     alt="Card image"
+                     height="300px"
+                     width="300px"
+                >
+                {% else %}
+                <img src="{% static 'image/empty_avatar.png' %}" width="300px" height="300px">
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{ publisher.nickname }}</h5>
+                    <p class="card-text">{{ publisher.description }}</p>
+                    <a href="{% url 'profitpages:publisher_detail' publisher.pk %}"
+                       class="btn btn-outline-primary">Детали</a>
+                </div>
             </div>
         </div>
     </div>
-
-
+    {% endfor %}
 </div>
+
+
 {% endblock %}

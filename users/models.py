@@ -11,7 +11,7 @@ class User(AbstractUser):
         max_length=50, verbose_name="Имя", help_text="Введите ваше имя", **NULLABLE
     )
     last_name = models.CharField(
-        max_length=50, verbose_name="Фамилия", help_text="Введите вашу фамилию"
+        max_length=50, verbose_name="Фамилия", help_text="Введите вашу фамилию", **NULLABLE
     )
     description = models.TextField(
         verbose_name="Описание", help_text="Введите дополнительное описание", **NULLABLE

@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from django_ckeditor_5.widgets import CKEditor5Widget
 
-from profitpages.models import Publication
+from profitpages.models import Publication, Publisher
 
 
 class PublicationForm(ModelForm):
@@ -18,3 +18,14 @@ class PublicationForm(ModelForm):
     class Meta:
         model = Publication
         fields = ("title", "description", "preview", "content", "publisher")
+
+
+class PublisherForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({"class": "form-control", "autofocus": ""})
+
+    class Meta:
+        model = Publisher
+        fields = ("nickname", "description", "user")

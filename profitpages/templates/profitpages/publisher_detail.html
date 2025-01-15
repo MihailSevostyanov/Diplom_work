@@ -1,10 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'profitpages/base.html' %}
+{% load my_tags %}
+{% load static %}
+{% block content %}
+<div class="container col-10">
+    <div class="modal modal-sheet position-static d-block bg-body-secondary p-0 py-md-6" tabindex="-1" role="dialog"
+         id="modalChoice">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content rounded-3 shadow">
+                <div class="modal-header">
+                    Проофиль пользователя
+                </div>
+                <div class="modal-header p-2 text-center">
+                    <h4>
+                        {% if object.user.avatar %}
+                    <img class="card-img-top"
+                         src="{{ object.user.avatar | media_filter }}"
+                         alt="Card image"
+                         height="300px"
+                         width="300px"
+                    >
+                    {% else %}
+                    <img src="{% static 'image/empty_avatar.png' %}" width="300px" height="300px">
+                    {% endif %}
+                    </h4>
+                </div>
+                <div class="modal-body p-2">
+                    <h5>Псевдоним: {{ object.nickname }}</h5>
+                    <p>Описание автора: {{ object.description }}</p>
+                    <p class="card-text">Имя пользователя в системе: {{ object.user.first_name }} {{ publisher.user.last_name }}</p>
+                    <p>Номер телефона: {{ object.user.phone }}</p>
+                    <p>Почта: {{ object.user.email }}</p>
+                    <p>Дата регистрации: {{ object.user.created_at }}</p>
+                    <p>
+                        {% if object.user.description %}
+                        Описание пользователя: {{ object.user.description }}
+                        {% else %}
+                        Описание пользователя: отсутствует
+                        {% endif %}
+                    </p>
 
-</body>
-</html>
+                </div>
+                <div class="modal-footer p-2">
+                    <div class="d-grid gap-2 d-md-block">
+                        <a href="{% url 'profitpages:publisher_update' object.pk %}" class="btn btn-outline-warning">Редактировать</a>
+                        <a href="{% url 'profitpages:publisher_delete' object.pk %}" class="btn btn-outline-danger">Удалить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
