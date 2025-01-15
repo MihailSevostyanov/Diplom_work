@@ -1,3 +1,5 @@
+from importlib.resources._common import _
+
 from django.http import JsonResponse, Http404
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
@@ -12,7 +14,7 @@ from django_ckeditor_5.forms import UploadFileForm
 from django_ckeditor_5.views import image_verify, NoImageException, handle_uploaded_file
 
 from config import settings
-from profitpages.forms import PublicationForm
+from profitpages.forms import PublicationForm, PublisherForm
 from profitpages.models import Publisher, Publication
 from users.models import User
 
@@ -81,6 +83,7 @@ class PublicationAuthorlistView(ListView):
 
 class PublisherListView(ListView):
     model = Publisher
+    context_object_name = "publishers"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -89,15 +92,37 @@ class PublisherListView(ListView):
 
 
 class PublisherCreateView(CreateView):
-    pass
+    model = Publisher
+    form_class = PublisherForm
+    template_name = "profitpages/publisher_form.html"
+    success_url = reverse_lazy('profitpages:main')
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
+
+class PublisherDetailView(DetailView):
+    model = Publisher
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
 
 
 class PublisherUpdateView(UpdateView):
-    pass
+    model = Publisher
+    form_class = PublisherForm
+
+    def get_success_url(self):
+        return reverse_lazy('profitpages:publisher_detail', args=[self.object.id])
+
+
 
 
 class PublisherDeleteView(DeleteView):
-    pass
+    model = Publisher
+    def get_success_url(self):
+        return reverse_lazy('profitpages:main')
 
 
 def upload_file(request):

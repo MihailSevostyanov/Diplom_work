@@ -1,4 +1,4 @@
-{% extends 'mailing/base.html' %}
+{% extends 'profitpages/base.html' %}
 
 {% block content %}
 <form class="row" method="post" enctype="multipart/form-data">
@@ -9,7 +9,7 @@
                 <div class="modal-body p-4 text-center">
                     {% csrf_token %}
                     <h5 class="mb-0">Подтверждение удаления</h5>
-                    <p class="mb-0">Вы действительно хотите удалить "{{object.title}}" ?</p>
+                    <p class="mb-0">Удалить автора "{{object.nickname}}" ?</p>
                 </div>
                 <div class="modal-footer flex-nowrap p-0">
                     <button type="submit"
@@ -17,7 +17,7 @@
                         <strong>Да</strong></button>
                     <a type="btn btn-primary"
                        class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0"
-                       href="{% url 'mailing:mailing_list' %}">Отмена</a>
+                       href="{% url 'profitpages:publisher_list' %}">Отмена</a>
                 </div>
             </div>
         </div>

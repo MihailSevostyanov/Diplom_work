@@ -20,7 +20,7 @@ class Publisher(models.Model):
         User,
         on_delete=models.CASCADE,
         verbose_name="Пользователь",
-        help_text="Введите имя пользователя",
+        help_text="Укажите пользователя, который является владельцем издательства",
         **NULLABLE
     )
 
@@ -49,6 +49,7 @@ class Publication(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Автор публикации",
         help_text="Укажите автора публикации",
+        related_name='publication',
         **NULLABLE
     )
     paid = models.BooleanField(default=False, help_text="Укажите тип контента:(Платный/Бесплатный)", verbose_name="Платный")
@@ -62,3 +63,18 @@ class Publication(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='subscription')
+    is_active = models.BooleanField(default=False, verbose_name="Активна ли подписка")
+    update_at = models.DateTimeField(auto_now_add=True, verbose_name="Время обновления подписки", **NULLABLE)
+    end_at = models.DateTimeField(verbose_name="Подписка активна до", **NULLABLE)
+
+    class Meta:
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"
+
