@@ -40,7 +40,27 @@
             <div class="d-grid gap-1">
 
                 <hr class="dropdown-divider">
+                <p class="card-text"><small class="text-body-secondary">
+                    Тип публикации:
+                    {% if object.paid %}
+                    <span class="badge rounded-pill text-bg-warning">Платная</span>
+                    {% else %}
+                    <span class="badge rounded-pill text-bg-success">Бесплатная</span>
+                    {% endif %}
+                </small></p>
                 <ul class="list-unstyled mb-0" style="display: flex;justify-content: space-between;">
+                    <li>
+                        {% if object.paid %}
+                        <a type="button" class="btn btn-primary" href="{% url 'profitpages:publication_set_paid' object.pk %}">
+                            Сделать беcплатной
+                        </a>
+                        {% else %}
+                        <a type="button" class="btn btn-primary"
+                           href="{% url 'profitpages:publication_set_paid' object.pk %}">
+                            Сделать платной
+                        </a>
+                        {% endif %}
+                    </li>
                     <li>
                         <a type="button" class="btn btn-warning"
                            href="{% url 'profitpages:publication_update' pk=object.pk %}">

@@ -1,22 +1,28 @@
+import datetime
+
+import stripe
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from django.http import JsonResponse, Http404
-from django.shortcuts import render, get_object_or_404
-from django.urls import reverse_lazy
+from django.http import JsonResponse, Http404, HttpResponse
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy, reverse
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import (
-    TemplateView,
     ListView,
     CreateView,
     UpdateView,
-    DeleteView, DetailView,
+    DeleteView,
+    DetailView,
 )
 from django_ckeditor_5.forms import UploadFileForm
 from django_ckeditor_5.views import image_verify, NoImageException, handle_uploaded_file
 
 from config import settings
+from config.settings import STRIPE_WEBHOOK
 from config.special_elements import PRICE_MONTH, PRICE_6_MONTH, PRICE_YEAR
 from profitpages.forms import PublicationForm, PublisherForm
-from profitpages.models import Publisher, Publication
+from profitpages.models import Publisher, Publication, Subscription
 from profitpages.services import new_create_stripe_session
 from users.models import User, Payment
 
@@ -143,7 +149,24 @@ def upload_file(request):
     raise Http404(_("Page not found"))
 
 
+def publication_set_paid(request, pk):
+    """
+    Переключение типа подписки (платная/бесплатная)
+    """
+    publication = get_object_or_404(Publication, pk=pk)
+    if publication.paid:
+        publication.paid = False
+    else:
+        publication.paid = True
+    publication.save()
+    return redirect(reverse('profitpages:main'))
+
+
+
 def buy_subscription(request):
+    """
+    Покупка подписки
+    """
     price_month = PRICE_MONTH
     price_6_month = PRICE_6_MONTH
     price_year = PRICE_YEAR
@@ -184,4 +207,45 @@ def buy_subscription(request):
 
     }
     return render(request, 'profitpages/subscription_create.html', context)
+
+@csrf_exempt
+def webhook_view(request):
+    payload = request.body
+    signature_header = request.META['HTTP_STRIPE_SIGNATURE']
+    event = None
+    try:
+        event = stripe.Webhook.construct_event(payload, signature_header, STRIPE_WEBHOOK
+                                               )
+    except ValueError as e:
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        return HttpResponse(status=400)
+    if event["type"] == "checkout.session.completed":
+        session = event["data"]["object"]
+        payment = Payment.objects.get(session_id=session['id'])
+        payment.is_paid = True
+        payment.paid_at = timezone.now()
+        payment.save()
+        print("Payment was successful.")
+        payments_list_to_remove = Payment.objects.filter(user=payment.user).filter(is_paid=False)
+        for payment_to_remove in payments_list_to_remove:
+            payment_to_remove.delete()
+
+        if int(session['amount_total']) == PRICE_MONTH * 100:
+            end_time = timezone.now() + datetime.timedelta(days=30)
+        elif int(session['amount_total']) == PRICE_6_MONTH * 6 * 100:
+            end_time = timezone.now() + datetime.timedelta(days=180)
+        elif int(session['amount_total']) == PRICE_YEAR * 12 * 100:
+            end_time = timezone.now() + datetime.timedelta(days=365)
+        else:
+            end_time = 'session["amount_total"] =! any of [PRICE_MONTH, PRICE_6_MONTH, PRICE_YEAR]'
+        Subscription.objects.create(
+            user=payment.user,
+            is_active=True,
+            update_at=timezone.now(),
+            end_at=end_time
+        )
+        print("Subscription was create.")
+    return HttpResponse(status=200)
+
 
