@@ -1,3 +1,5 @@
+from datetime import timezone
+
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.views import LoginView
@@ -9,6 +11,7 @@ from django.views.generic import CreateView
 from config.settings import DEBUG
 from profitpages.services import send_sms
 from users.forms import UserLoginForm, UserRegisterForm
+from users.models import Payment
 
 User = get_user_model()
 

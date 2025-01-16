@@ -67,9 +67,11 @@
                        href="{% url 'profitpages:publisher_detail' pk=user.pk %}">Мой профиль</a>
                     <a type="button" class="btn btn-outline-info"
                        href="{% url 'profitpages:publication_author' pk=user.pk %}">Мои публикации</a>
+                    <a type="button" class="btn btn-outline-warning" href="{% url 'profitpages:main' %}">Все
+                        публикации</a>
                     <a type="button" class="btn btn-outline-warning" href="{% url 'profitpages:publisher_list' %}">Все
                         авторы</a>
-                     <a type="button" class="btn btn-outline-success"
+                    <a type="button" class="btn btn-outline-success"
                        href="{% url 'profitpages:publisher_create' %}">Добавить автора
                     </a>
                     <a type="button" class="btn btn-outline-success"
@@ -87,44 +89,39 @@
 
         {% for pub in publications %}
 
-        {% if pub.preview %}
+
         <div class="card mb-3" style="max-width: 1000px;">
             <div class="row g-0">
                 <div class="col-md-4">
+                    {% if pub.preview %}
                     <img class="card-img-top"
                          src="{{ pub.preview | media_filter }}"
                          alt="Card image"
                          height="300px"
                          width="300px"
                     >
+                    {% else %}
+                    <img src="{% static 'image/no_image.jpeg' %}" width="300" height="300">
+                    {% endif %}
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
                         <h5 class="card-title">{{ pub.title }}</h5>
                         <p class="card-text">{{ pub.description }}</p>
                         <p class="card-text"><small class="text-body-secondary">автор: {{ pub.publisher }}</small></p>
+                        <p class="card-text"><small class="text-body-secondary">
+                                Тип публикации:
+                                {% if pub.paid %}
+                                <span class="badge rounded-pill text-bg-warning">Платная</span>
+                                {% else %}
+                                <span class="badge rounded-pill text-bg-success">Бесплатная</span>
+                                {% endif %}
+                        </small></p>
                         <a href="{% url 'profitpages:publication_detail' pub.pk %}" class="btn btn-outline-primary">Читать</a>
                     </div>
                 </div>
             </div>
         </div>
-        {% else %}
-        <div class="card mb-3" style="max-width: 900px;">
-            <div class="row g-0">
-                <div class="col-md-4">
-                    <img src="{% static 'image/no_image.jpeg' %}" width="300" height="300">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ pub.title }}</h5>
-                        <p class="card-text">{{ pub.description }}</p>
-                        <p class="card-text"><small class="text-body-secondary">автор: {{ pub.publisher }}</small></p>
-                        <a href="#" class="btn btn-outline-primary">Читать</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
         {% endfor %}
         {% if not publications %}
         <h2>Ничего не найдено.</h2>
