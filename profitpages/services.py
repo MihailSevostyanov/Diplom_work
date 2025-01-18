@@ -1,12 +1,30 @@
-from random import random
+import json
+import random
 
+import requests
 import stripe
 
-from config.settings import DEBUG, STRIPE_API_KEY
+from config import settings
+from config.settings import DEBUG, STRIPE_API_KEY, PROSTOR_LOGIN, PROSTOR_PASSWORD
+from smsaero import SmsAero
 
 
 def send_sms(phone):
     random_code = random.randint(100000, 999999)
+    post_url = 'http://api.prostor-sms.ru/messages/v2/send.json/'
+    data = {
+        "login": PROSTOR_LOGIN,
+        "password": PROSTOR_PASSWORD,
+        "messages": [
+            {
+                "phone": str(phone),
+                "text":  f"Ваш код подтверждения для входа на платформу ProfitPages: {random_code}",
+                "clientId": "1"
+            }
+        ]
+    }
+    json_data = json.dumps(data)
+    requests.post(post_url, data=json_data)
     return random_code
 
 

@@ -2,6 +2,7 @@ from datetime import timezone
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -15,6 +16,11 @@ from users.forms import UserLoginForm, UserRegisterForm
 from users.models import Payment
 
 User = get_user_model()
+
+
+class CustomLoginRequiredMixin(LoginRequiredMixin, View):
+    login_url = reverse_lazy('users:login')
+    redirect_field_name = "redirect_to"
 
 
 class UserCreateView(CreateView):
@@ -32,7 +38,7 @@ class SMSVerificationView(View):
         submitted_sms = request.POST.get("sms")
         saved_sms = request.session.get("sms")
 
-        password = request.session.get("password")
+        password = request.session.get("password1")
         email = request.session.get("email")
         first_name = request.session.get("first_name")
         last_name = request.session.get("last_name")
@@ -80,12 +86,10 @@ class RegisterView(CreateView):
                 return SMSVerificationView.as_view()(request)
             else:
                 password = form.cleaned_data["password1"]
-                if not DEBUG:
+                if DEBUG:
                     sms = str(send_sms(phone))
-                    print(f"Ваш код подтверждения: {sms}")
                 else:
-                    sms = "1234"
-
+                    sms = '1111'
                 request.session["sms"] = sms
                 request.session["phone"] = phone
                 request.session["password1"] = password
@@ -94,18 +98,20 @@ class RegisterView(CreateView):
                 request.session["last_name"] = last_name
                 form.fields["password1"].widget.attrs["value"] = password
                 form.fields["password2"].widget.attrs["value"] = password
+                print(f"Спасибо за регистрацию на платформе ProfitPages!\n"
+                      f"Ваш код подтверждения: {sms}")
 
                 return render(
                     request, "users/register.html", {"form": form, "sms_required": True}
                 )
         return render(
-            request, "users/register.html", {"form": form, "sms_required": True}
+            request, "users/register.html", {"form": form, "sms_required": False}
         )
 
 
 def payment_success(request):
-    my_webhook_view(request)
     return render(request, 'users/payment_success.html')
+
 
 def payment_cancel(request):
     return render(request, 'users/payment_cancel.html')
