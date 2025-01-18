@@ -42,7 +42,7 @@ class PublicationCreateView(CreateView):
     model = Publication
     form_class = PublicationForm
     template_name = "profitpages/publication_form.html"
-    success_url = reverse_lazy('profitpages:main')
+    success_url = reverse_lazy("profitpages:main")
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
@@ -62,7 +62,7 @@ class PublicationUpdateView(UpdateView):
     form_class = PublicationForm
 
     def get_success_url(self):
-        return reverse_lazy('profitpages:publication_detail', args=[self.object.id])
+        return reverse_lazy("profitpages:publication_detail", args=[self.object.id])
 
     # def get_object(self, queryset=None):
     #     obj = super().get_object()
@@ -75,18 +75,18 @@ class PublicationDeleteView(DeleteView):
     model = Publication
 
     def get_success_url(self):
-        return reverse_lazy('profitpages:main')
+        return reverse_lazy("profitpages:main")
 
 
 class PublicationAuthorlistView(ListView):
-    context_object_name = 'publications'
+    context_object_name = "publications"
     template_name = "profitpages/home.html"
     paginate_by = 5
 
     def get_queryset(self):
-        author_id = self.kwargs.get('pk')
+        author_id = self.kwargs.get("pk")
         author = get_object_or_404(Publisher, pk=author_id)
-        return Publication.objects.filter(publisher=author).order_by('-updated_at')
+        return Publication.objects.filter(publisher=author).order_by("-updated_at")
 
 
 class PublisherListView(ListView):
@@ -103,15 +103,16 @@ class PublisherCreateView(CreateView):
     model = Publisher
     form_class = PublisherForm
     template_name = "profitpages/publisher_form.html"
-    success_url = reverse_lazy('profitpages:main')
+    success_url = reverse_lazy("profitpages:main")
+
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
 
-
 class PublisherDetailView(DetailView):
     model = Publisher
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
@@ -122,15 +123,14 @@ class PublisherUpdateView(UpdateView):
     form_class = PublisherForm
 
     def get_success_url(self):
-        return reverse_lazy('profitpages:publisher_detail', args=[self.object.id])
-
-
+        return reverse_lazy("profitpages:publisher_detail", args=[self.object.id])
 
 
 class PublisherDeleteView(DeleteView):
     model = Publisher
+
     def get_success_url(self):
-        return reverse_lazy('profitpages:main')
+        return reverse_lazy("profitpages:main")
 
 
 def upload_file(request):
@@ -140,11 +140,13 @@ def upload_file(request):
     """
     if request.method == "POST":
         form = UploadFileForm(request.POST, request.FILES)
-        allow_all_file_types = getattr(settings, "CKEDITOR_5_ALLOW_ALL_FILE_TYPES", False)
+        allow_all_file_types = getattr(
+            settings, "CKEDITOR_5_ALLOW_ALL_FILE_TYPES", False
+        )
 
         if not allow_all_file_types:
             try:
-                image_verify(request.FILES['upload'])
+                image_verify(request.FILES["upload"])
             except NoImageException as ex:
                 return JsonResponse({"error": {"message": f"{ex}"}}, status=400)
         if form.is_valid():
@@ -163,8 +165,7 @@ def publication_set_paid(request, pk):
     else:
         publication.paid = True
     publication.save()
-    return redirect(reverse('profitpages:main'))
-
+    return redirect(reverse("profitpages:main"))
 
 
 def buy_subscription(request):
@@ -198,27 +199,27 @@ def buy_subscription(request):
     )
 
     context = {
-        'price_month': price_month,
-        'price_6_month': price_6_month,
-        'price_year': price_year,
-
-        'total_price_6_month': total_price_6_month,
-        'total_price_year': total_price_year,
-
-        'url_month': url_month,
-        'url_6_month': url_6_month,
-        'url_year': url_year,
-
+        "price_month": price_month,
+        "price_6_month": price_6_month,
+        "price_year": price_year,
+        "total_price_6_month": total_price_6_month,
+        "total_price_year": total_price_year,
+        "url_month": url_month,
+        "url_6_month": url_6_month,
+        "url_year": url_year,
     }
-    return render(request, 'profitpages/subscription_create.html', context)
+    return render(request, "profitpages/subscription_create.html", context)
+
 
 @csrf_exempt
 def my_webhook_view(request):
     payload = request.body
-    signature_header = request.META['HTTP_STRIPE_SIGNATURE']
+    signature_header = request.META["HTTP_STRIPE_SIGNATURE"]
     event = None
     try:
-        event = stripe.Webhook.construct_event(payload, signature_header, STRIPE_WEBHOOK)
+        event = stripe.Webhook.construct_event(
+            payload, signature_header, STRIPE_WEBHOOK
+        )
     except ValueError as e:
         return HttpResponse(status=400)
     except stripe.error.SignatureVerificationError as e:
@@ -226,34 +227,30 @@ def my_webhook_view(request):
 
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
-        payment = Payment.objects.get(session_id=session['id'])
+        payment = Payment.objects.get(session_id=session["id"])
         payment.is_paid = True
         payment.paid_at = timezone.now()
         payment.save()
-        payments_list_to_remove = Payment.objects.filter(user=payment.user).filter(is_paid=False)
+        payments_list_to_remove = Payment.objects.filter(user=payment.user).filter(
+            is_paid=False
+        )
         for payment_to_remove in payments_list_to_remove:
             payment_to_remove.delete()
 
-        if int(session['amount_total']) == PRICE_MONTH * 100:
+        if int(session["amount_total"]) == PRICE_MONTH * 100:
             end_time = timezone.now() + datetime.timedelta(days=30)
-        elif int(session['amount_total']) == PRICE_6_MONTH * 6 * 100:
+        elif int(session["amount_total"]) == PRICE_6_MONTH * 6 * 100:
             end_time = timezone.now() + datetime.timedelta(days=180)
-        elif int(session['amount_total']) == PRICE_YEAR * 12 * 100:
+        elif int(session["amount_total"]) == PRICE_YEAR * 12 * 100:
             end_time = timezone.now() + datetime.timedelta(days=365)
         else:
             end_time = 'session["amount_total"] =! any of [PRICE_MONTH, PRICE_6_MONTH, PRICE_YEAR]'
 
         Subscription.objects.create(
-            user=payment.user,
-            is_active=True,
-            update_at=timezone.now(),
-            end_at=end_time
+            user=payment.user, is_active=True, update_at=timezone.now(), end_at=end_time
         )
-        user = User.objects.get(['pk'])
+        user = User.objects.get(["pk"])
         user.is_subscribed = True
         user.save()
 
     return HttpResponse(status=200)
-
-
-

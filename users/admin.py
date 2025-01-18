@@ -19,7 +19,16 @@ class UserAdmin(admin.ModelAdmin):
     )
     list_filter = ("email", "is_superuser")
 
+
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ("user", "price", "session_id", "is_paid", "created_at", "paid_at", "pk",)
+    list_display = (
+        "user",
+        "price",
+        "session_id",
+        "is_paid",
+        "created_at",
+        "paid_at",
+        "pk",
+    )
     list_filter = ("created_at",)

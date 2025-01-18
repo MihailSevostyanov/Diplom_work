@@ -49,14 +49,32 @@ class Publication(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Автор публикации",
         help_text="Укажите автора публикации",
-        related_name='publication',
+        related_name="publication",
         **NULLABLE
     )
-    paid = models.BooleanField(default=False, help_text="Укажите тип контента:(Платный/Бесплатный)", verbose_name="Платный")
-    preview = models.ImageField(upload_to="publication/preview", verbose_name="Превью", help_text="Загрузите превью публикации", **NULLABLE)
-    content = CKEditor5Field(verbose_name='содержание публикации', config_name='extends', **NULLABLE)
-    updated_at = models.DateTimeField(verbose_name="дата последнего изменения", auto_now=True, **NULLABLE)
-    link = models.CharField(max_length=150, verbose_name="ссылка на видео", help_text="Укажите ссылку на видео", **NULLABLE)
+    paid = models.BooleanField(
+        default=False,
+        help_text="Укажите тип контента:(Платный/Бесплатный)",
+        verbose_name="Платный",
+    )
+    preview = models.ImageField(
+        upload_to="publication/preview",
+        verbose_name="Превью",
+        help_text="Загрузите превью публикации",
+        **NULLABLE
+    )
+    content = CKEditor5Field(
+        verbose_name="содержание публикации", config_name="extends", **NULLABLE
+    )
+    updated_at = models.DateTimeField(
+        verbose_name="дата последнего изменения", auto_now=True, **NULLABLE
+    )
+    link = models.CharField(
+        max_length=150,
+        verbose_name="ссылка на видео",
+        help_text="Укажите ссылку на видео",
+        **NULLABLE
+    )
 
     class Meta:
         verbose_name = "Публикация"
@@ -68,14 +86,14 @@ class Publication(models.Model):
 
 class Subscription(models.Model):
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='subscription')
+        User, on_delete=models.CASCADE, related_name="subscription"
+    )
     is_active = models.BooleanField(default=False, verbose_name="Активна ли подписка")
-    update_at = models.DateTimeField(auto_now_add=True, verbose_name="Время обновления подписки", **NULLABLE)
+    update_at = models.DateTimeField(
+        auto_now_add=True, verbose_name="Время обновления подписки", **NULLABLE
+    )
     end_at = models.DateTimeField(verbose_name="Подписка активна до", **NULLABLE)
 
     class Meta:
         verbose_name = "Подписка"
         verbose_name_plural = "Подписки"
-

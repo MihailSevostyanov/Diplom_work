@@ -11,7 +11,10 @@ class User(AbstractUser):
         max_length=50, verbose_name="Имя", help_text="Введите ваше имя", **NULLABLE
     )
     last_name = models.CharField(
-        max_length=50, verbose_name="Фамилия", help_text="Введите вашу фамилию", **NULLABLE
+        max_length=50,
+        verbose_name="Фамилия",
+        help_text="Введите вашу фамилию",
+        **NULLABLE,
     )
     description = models.TextField(
         verbose_name="О себе", help_text="Введите информацию о себе", **NULLABLE
@@ -22,11 +25,11 @@ class User(AbstractUser):
         verbose_name="Телефон",
         help_text="Введите номер телефона",
     )
-    avatar = models.ImageField(
-        upload_to="users/", verbose_name="Аватар", **NULLABLE
+    avatar = models.ImageField(upload_to="users/", verbose_name="Аватар", **NULLABLE)
+    created_at = models.DateField(
+        verbose_name="Дата создания профиля", auto_now_add=True, **NULLABLE
     )
-    created_at = models.DateField(verbose_name='Дата создания профиля', auto_now_add=True, **NULLABLE)
-    is_subscribed = models.BooleanField(default=False, verbose_name='Подписка')
+    is_subscribed = models.BooleanField(default=False, verbose_name="Подписка")
 
     USERNAME_FIELD = "phone"
     REQUIRED_FIELDS = []
@@ -41,11 +44,20 @@ class User(AbstractUser):
 
 class Payment(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.SET_NULL, verbose_name="Пользователь", related_name="payment", **NULLABLE)
+        User,
+        on_delete=models.SET_NULL,
+        verbose_name="Пользователь",
+        related_name="payment",
+        **NULLABLE,
+    )
     price = models.PositiveIntegerField(verbose_name="сумма оплаты")
     session_id = models.CharField(max_length=300, verbose_name="id сессии")
-    is_paid = models.BooleanField(default=False, verbose_name="Статус прохождения платежа")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания платежа")
+    is_paid = models.BooleanField(
+        default=False, verbose_name="Статус прохождения платежа"
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name="Дата создания платежа"
+    )
     paid_at = models.DateTimeField(verbose_name="Дата оплаты", **NULLABLE)
 
     class Meta:
