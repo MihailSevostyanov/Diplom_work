@@ -14,7 +14,7 @@ class User(AbstractUser):
         max_length=50, verbose_name="Фамилия", help_text="Введите вашу фамилию", **NULLABLE
     )
     description = models.TextField(
-        verbose_name="Описание", help_text="Введите дополнительное описание", **NULLABLE
+        verbose_name="О себе", help_text="Введите информацию о себе", **NULLABLE
     )
     phone = models.CharField(
         unique=True,
@@ -26,6 +26,7 @@ class User(AbstractUser):
         upload_to="users/", verbose_name="Аватар", **NULLABLE
     )
     created_at = models.DateField(verbose_name='Дата создания профиля', auto_now_add=True, **NULLABLE)
+    is_subscribed = models.BooleanField(default=False, verbose_name='Подписка')
 
     USERNAME_FIELD = "phone"
     REQUIRED_FIELDS = []
@@ -40,13 +41,16 @@ class User(AbstractUser):
 
 class Payment(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.SET_NULL, verbose_name="Пользователь", related_name="payments", **NULLABLE)
+        User, on_delete=models.SET_NULL, verbose_name="Пользователь", related_name="payment", **NULLABLE)
     price = models.PositiveIntegerField(verbose_name="сумма оплаты")
     session_id = models.CharField(max_length=300, verbose_name="id сессии")
     is_paid = models.BooleanField(default=False, verbose_name="Статус прохождения платежа")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания платежа")
-    paid_it = models.DateTimeField(verbose_name="Дата оплаты", **NULLABLE)
+    paid_at = models.DateTimeField(verbose_name="Дата оплаты", **NULLABLE)
 
     class Meta:
         verbose_name = "Платеж"
         verbose_name_plural = "Платежи"
+
+        def __str__(self):
+            return f"{self.user} - {self.price}"

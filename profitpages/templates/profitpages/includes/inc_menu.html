@@ -9,9 +9,11 @@
             </div>
             <div class="col-sm-4 offset-md-1 py-4">
                 <ul class="list-unstyled">
-                    <li><a href="{% url 'profitpages:main' %}" class="text-white">Главная</a></li>
-                    <li><a href="{% url 'users:login' %}" class="text-white">Войти</a></li>
-                    <li><a href="{% url 'users:register' %}" class="text-white">Регистрация</a></li>
+                    <li class="nav-item"><a href="{% url 'profitpages:main' %}"><button type="submit"
+                                    style="padding: 0.5rem 1rem; border-radius: 0.25rem; background-color: rgba(0,0,0,.03); color: #ffffff; border: none; cursor: pointer;">
+                                Главная
+                            </button></a></li>
+                    {% if user.is_authenticated %}
                     <form method="post" action="{% url 'users:logout' %}">
                         <li class="nav-item">
                             {% csrf_token %}
@@ -21,6 +23,26 @@
                             </button>
                         </li>
                     </form>
+                    {% else %}
+                    <form method="post" action="{% url 'users:login' %}">
+                        <li class="nav-item">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    style="padding: 0.5rem 1rem; border-radius: 0.25rem; background-color: rgba(0,0,0,.03); color: #00ff80; border: none; cursor: pointer;">
+                                Войти
+                            </button>
+                        </li>
+                    </form>
+                    <form method="post" action="{% url 'users:register' %}">
+                        <li class="nav-item">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    style="padding: 0.5rem 1rem; border-radius: 0.25rem; background-color: rgba(0,0,0,.03); color: #ffd900; border: none; cursor: pointer;">
+                                Регистрация
+                            </button>
+                        </li>
+                    </form>
+                    {% endif %}
                 </ul>
             </div>
         </div>

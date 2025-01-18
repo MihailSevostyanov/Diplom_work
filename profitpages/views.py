@@ -134,6 +134,10 @@ class PublisherDeleteView(DeleteView):
 
 
 def upload_file(request):
+    """
+    Переписанная функция из .venv/lib/site-packages/django_ckeditor_5/view.py
+    Библиотека запрещает загружать файлы, если user.is_staff=False
+    """
     if request.method == "POST":
         form = UploadFileForm(request.POST, request.FILES)
         allow_all_file_types = getattr(settings, "CKEDITOR_5_ALLOW_ALL_FILE_TYPES", False)
@@ -209,24 +213,23 @@ def buy_subscription(request):
     return render(request, 'profitpages/subscription_create.html', context)
 
 @csrf_exempt
-def webhook_view(request):
+def my_webhook_view(request):
     payload = request.body
     signature_header = request.META['HTTP_STRIPE_SIGNATURE']
     event = None
     try:
-        event = stripe.Webhook.construct_event(payload, signature_header, STRIPE_WEBHOOK
-                                               )
+        event = stripe.Webhook.construct_event(payload, signature_header, STRIPE_WEBHOOK)
     except ValueError as e:
         return HttpResponse(status=400)
     except stripe.error.SignatureVerificationError as e:
         return HttpResponse(status=400)
+
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
         payment = Payment.objects.get(session_id=session['id'])
         payment.is_paid = True
         payment.paid_at = timezone.now()
         payment.save()
-        print("Payment was successful.")
         payments_list_to_remove = Payment.objects.filter(user=payment.user).filter(is_paid=False)
         for payment_to_remove in payments_list_to_remove:
             payment_to_remove.delete()
@@ -239,13 +242,18 @@ def webhook_view(request):
             end_time = timezone.now() + datetime.timedelta(days=365)
         else:
             end_time = 'session["amount_total"] =! any of [PRICE_MONTH, PRICE_6_MONTH, PRICE_YEAR]'
+
         Subscription.objects.create(
             user=payment.user,
             is_active=True,
             update_at=timezone.now(),
             end_at=end_time
         )
-        print("Subscription was create.")
+        user = User.objects.get(['pk'])
+        user.is_subscribed = True
+        user.save()
+
     return HttpResponse(status=200)
+
 
 

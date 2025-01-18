@@ -10,6 +10,7 @@ from django.views.generic import CreateView
 
 from config.settings import DEBUG
 from profitpages.services import send_sms
+from profitpages.views import my_webhook_view
 from users.forms import UserLoginForm, UserRegisterForm
 from users.models import Payment
 
@@ -103,6 +104,7 @@ class RegisterView(CreateView):
 
 
 def payment_success(request):
+    my_webhook_view(request)
     return render(request, 'users/payment_success.html')
 
 def payment_cancel(request):
