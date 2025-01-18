@@ -19,7 +19,7 @@ User = get_user_model()
 
 
 class CustomLoginRequiredMixin(LoginRequiredMixin, View):
-    login_url = reverse_lazy('users:login')
+    login_url = reverse_lazy("users:login")
     redirect_field_name = "redirect_to"
 
 
@@ -89,7 +89,7 @@ class RegisterView(CreateView):
                 if DEBUG:
                     sms = str(send_sms(phone))
                 else:
-                    sms = '1111'
+                    sms = "1111"
                 request.session["sms"] = sms
                 request.session["phone"] = phone
                 request.session["password1"] = password
@@ -98,8 +98,10 @@ class RegisterView(CreateView):
                 request.session["last_name"] = last_name
                 form.fields["password1"].widget.attrs["value"] = password
                 form.fields["password2"].widget.attrs["value"] = password
-                print(f"Спасибо за регистрацию на платформе ProfitPages!\n"
-                      f"Ваш код подтверждения: {sms}")
+                print(
+                    f"Спасибо за регистрацию на платформе ProfitPages!\n"
+                    f"Ваш код подтверждения: {sms}"
+                )
 
                 return render(
                     request, "users/register.html", {"form": form, "sms_required": True}
@@ -110,8 +112,8 @@ class RegisterView(CreateView):
 
 
 def payment_success(request):
-    return render(request, 'users/payment_success.html')
+    return render(request, "users/payment_success.html")
 
 
 def payment_cancel(request):
-    return render(request, 'users/payment_cancel.html')
+    return render(request, "users/payment_cancel.html")
