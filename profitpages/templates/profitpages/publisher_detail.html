@@ -27,6 +27,7 @@
                 <div class="modal-body p-2">
                     <h5>Псевдоним: {{ object.nickname }}</h5>
                     <p>Описание автора: {{ object.description }}</p>
+                    {% if user.is_staff or user.is_superuser %}
                     <p class="card-text">Имя пользователя в системе: {{ object.user.first_name }} {{ publisher.user.last_name }}</p>
                     <p>Номер телефона: {{ object.user.phone }}</p>
                     <p>Почта: {{ object.user.email }}</p>
@@ -38,7 +39,6 @@
                         Описание пользователя: отсутствует
                         {% endif %}
                     </p>
-
                 </div>
                 <div class="modal-footer p-2">
                     <div class="d-grid gap-2 d-md-block">
@@ -46,6 +46,7 @@
                         <a href="{% url 'profitpages:publisher_delete' object.pk %}" class="btn btn-outline-danger">Удалить</a>
                     </div>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
