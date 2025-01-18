@@ -106,7 +106,8 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 AUTH_USER_MODEL = "users.User"
-
+LOGIN_REDIRECT_URL = 'profitpages:main'
+LOGOUT_REDIRECT_URL = 'profitpages:main'
 
 customColorPalette = [
     {
@@ -205,3 +206,6 @@ CKEDITOR_5_CONFIGS = {
 
 STRIPE_API_KEY = os.getenv('STRIPE_API_KEY')
 STRIPE_WEBHOOK = os.getenv('STRIPE_WEBHOOK')
+
+PROSTOR_LOGIN = os.getenv('PROSTOR_LOGIN')
+PROSTOR_PASSWORD = os.getenv('PROSTOR_PASSWORD')
