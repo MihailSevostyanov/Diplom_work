@@ -91,9 +91,13 @@
             </div>
             {% else %}
             <div class="alert alert-warning" role="alert">
+                {% if user.is_authenticated %}
                 Эта статья является платной.
                 <a type="button" class="btn btn-info" href="{% url 'profitpages:subscription_create' %}">Приобрести
                             подписку</a>
+                {% else %}
+                Эта статья является платной. Вам необходимо авторизоваться или зарегистрироваться для просмотра этой статьи.
+                {% endif %}
             </div>
             {% endif %}
         {% else %}

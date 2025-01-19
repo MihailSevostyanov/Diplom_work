@@ -1,6 +1,7 @@
 import datetime
 
 import stripe
+from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -168,9 +169,10 @@ def publication_set_paid(request, pk):
     return redirect(reverse("profitpages:main"))
 
 
+@login_required(login_url='profitpages:login')
 def buy_subscription(request):
     """
-    Покупка подписки
+    Создание экземпляров платежей
     """
     price_month = PRICE_MONTH
     price_6_month = PRICE_6_MONTH
@@ -213,44 +215,44 @@ def buy_subscription(request):
 
 @csrf_exempt
 def my_webhook_view(request):
+    """
+    выполняется при перенаправлении вебхука (получал вебхук на webhook.site) но так как нет подписки, перенаправить его не могу
+    """
     payload = request.body
-    signature_header = request.META["HTTP_STRIPE_SIGNATURE"]
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
     event = None
     try:
         event = stripe.Webhook.construct_event(
-            payload, signature_header, STRIPE_WEBHOOK
+            payload, sig_header, STRIPE_WEBHOOK
         )
     except ValueError as e:
         return HttpResponse(status=400)
     except stripe.error.SignatureVerificationError as e:
         return HttpResponse(status=400)
-
-    if event["type"] == "checkout.session.completed":
-        session = event["data"]["object"]
-        payment = Payment.objects.get(session_id=session["id"])
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        payment = Payment.objects.get(session_id=session['id'])
         payment.is_paid = True
         payment.paid_at = timezone.now()
         payment.save()
-        payments_list_to_remove = Payment.objects.filter(user=payment.user).filter(
-            is_paid=False
-        )
+        payments_list_to_remove = Payment.objects.filter(user=payment.user).filter(is_paid=False)
         for payment_to_remove in payments_list_to_remove:
             payment_to_remove.delete()
 
-        if int(session["amount_total"]) == PRICE_MONTH * 100:
+        if int(session['amount_total']) == PRICE_MONTH * 100:
             end_time = timezone.now() + datetime.timedelta(days=30)
-        elif int(session["amount_total"]) == PRICE_6_MONTH * 6 * 100:
+        elif int(session['amount_total']) == PRICE_6_MONTH * 6 * 100:
             end_time = timezone.now() + datetime.timedelta(days=180)
-        elif int(session["amount_total"]) == PRICE_YEAR * 12 * 100:
+        elif int(session['amount_total']) == PRICE_YEAR * 12 * 100:
             end_time = timezone.now() + datetime.timedelta(days=365)
         else:
             end_time = 'session["amount_total"] =! any of [PRICE_MONTH, PRICE_6_MONTH, PRICE_YEAR]'
-
         Subscription.objects.create(
-            user=payment.user, is_active=True, update_at=timezone.now(), end_at=end_time
+            user=payment.user,
+            is_active=True,
+            update_at=timezone.now(),
+            end_at=end_time
         )
-        user = User.objects.get(["pk"])
-        user.is_subscribed = True
-        user.save()
-
     return HttpResponse(status=200)
+
+

@@ -42,7 +42,7 @@ def new_create_stripe_session(price):
                     "currency": "rub",
                     "unit_amount": price * 100,
                     "product_data": {
-                        "name": "Подписка сервиса ProfitPages",
+                        "name": "Подписка сервиса на сервис ProfitPages",
                     },
                 },
                 "quantity": 1,
