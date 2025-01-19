@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -12,7 +13,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -21,8 +22,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "phonenumber_field",
+
     "django_ckeditor_5",
+    'django_celery_beat',
+    "corsheaders",
+
     "users",
     "profitpages",
 ]
@@ -59,12 +63,14 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.getenv("NAME"),
-        "PASSWORD": os.getenv("PASSWORD"),
-        "USER": os.getenv("USER_DB"),
-        "HOST": os.getenv("HOST"),
-        "PORT": os.getenv("PORT"),
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DB"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "USER": os.getenv("POSTGRES_USER"),
+        # "HOST": os.getenv("POSTGRES_HOST"),
+        # "PORT": os.getenv("POSTGRES_PORT"),
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
 
@@ -260,3 +266,40 @@ STRIPE_WEBHOOK = os.getenv("STRIPE_WEBHOOK")
 
 PROSTOR_LOGIN = os.getenv("PROSTOR_LOGIN")
 PROSTOR_PASSWORD = os.getenv("PROSTOR_PASSWORD")
+
+
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
+]
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
+]
+
+CELERY_BROKER_URI = "redis://localhost:6379/0"
+CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+
+CELERY_BEAT_SCHEDULE = {
+    'check_subscriptions': {
+        'task': 'main_app.tasks.check_subscriptions',
+        'schedule': timedelta(days=1),
+    },
+    'clear_residual_payments': {
+        'task': 'main_app.tasks.clear_residual_payments',
+        'schedule': timedelta(days=2),
+    },
+}
+
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 600
+
+# CELERY_BEAT_SCHEDULE = {
+#     "block_users_who_was_absent_last_mount": {
+#         "task": "courses.tasks.block_users_who_was_absent_last_mount",
+#         "schedule": timedelta(minutes=1),  # Run every day at 00:00
+#         "kwargs": {"block_absent": True, "timedelta_days": 30},
+#     }
+# }

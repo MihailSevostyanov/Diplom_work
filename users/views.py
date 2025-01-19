@@ -4,18 +4,15 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView
 
 from config.settings import DEBUG
 from profitpages.services import send_sms
-from profitpages.views import my_webhook_view
 from users.forms import UserLoginForm, UserRegisterForm
-from users.models import Payment
-
-User = get_user_model()
+from users.models import User, Payment
 
 
 class CustomLoginRequiredMixin(LoginRequiredMixin, View):
@@ -112,6 +109,9 @@ class RegisterView(CreateView):
 
 
 def payment_success(request):
+    user = request.user
+    user.is_subscribed = True
+    user.save()
     return render(request, "users/payment_success.html")
 
 
