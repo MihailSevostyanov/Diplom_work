@@ -23,6 +23,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+    "django_filters",
+    "rest_framework",
+    "rest_framework_simplejwt",
     "django_ckeditor_5",
     'django_celery_beat',
     "corsheaders",
@@ -60,6 +63,22 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
+
+REST_FRAMEWORK = {
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "UPDATE_LAST_LOGIN": True,
+}
 
 DATABASES = {
     "default": {
@@ -267,7 +286,6 @@ STRIPE_WEBHOOK = os.getenv("STRIPE_WEBHOOK")
 PROSTOR_LOGIN = os.getenv("PROSTOR_LOGIN")
 PROSTOR_PASSWORD = os.getenv("PROSTOR_PASSWORD")
 
-
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",
     "http://localhost:8000",
@@ -296,10 +314,10 @@ CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 600
 
-# CELERY_BEAT_SCHEDULE = {
-#     "block_users_who_was_absent_last_mount": {
-#         "task": "courses.tasks.block_users_who_was_absent_last_mount",
-#         "schedule": timedelta(minutes=1),  # Run every day at 00:00
-#         "kwargs": {"block_absent": True, "timedelta_days": 30},
-#     }
-# }
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', False) == 'True'
+EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', False) == 'True'

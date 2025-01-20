@@ -11,6 +11,7 @@ class UserAdmin(admin.ModelAdmin):
         "last_name",
         "description",
         "created_at",
+        "is_publisher",
         "is_subscribed",
         "is_superuser",
         "is_staff",

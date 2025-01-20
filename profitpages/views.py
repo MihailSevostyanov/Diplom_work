@@ -85,8 +85,9 @@ class PublicationAuthorlistView(ListView):
     paginate_by = 5
 
     def get_queryset(self):
-        author_id = self.kwargs.get("pk")
-        author = get_object_or_404(Publisher, pk=author_id)
+        user_id = self.kwargs.get("pk")
+        user = get_object_or_404(User, pk=user_id)
+        author = get_object_or_404(Publisher, user=user)
         return Publication.objects.filter(publisher=author).order_by("-updated_at")
 
 
@@ -106,9 +107,12 @@ class PublisherCreateView(CreateView):
     template_name = "profitpages/publisher_form.html"
     success_url = reverse_lazy("profitpages:main")
 
+
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+
+
 
 
 class PublisherDetailView(DetailView):
@@ -256,3 +260,14 @@ def my_webhook_view(request):
     return HttpResponse(status=200)
 
 
+def set_user_is_publisher(request, pk):
+    """
+    Установка флага is_publisher у пользователя по его pk
+    функция не доработана, в будующем позволит переключать флаг из интерфейса
+    """
+    publisher = get_object_or_404(Publisher, pk=pk)
+    user = request.user
+    if user.pk == publisher.user.pk:
+        user.is_publisher = True
+        user.save()
+    return redirect(reverse_lazy("profitpages:main"))

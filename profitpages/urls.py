@@ -16,7 +16,7 @@ from profitpages.views import (
     PublisherListView,
     buy_subscription,
     publication_set_paid,
-    my_webhook_view,
+    my_webhook_view, set_user_is_publisher,
 )
 from users.views import payment_success, payment_cancel
 
@@ -36,6 +36,7 @@ urlpatterns = [
     path("payment_success/", payment_success, name="payment_success"),
     path("payment_cancel/", payment_cancel, name="payment_cancel"),
     path("publication_set_paid/<int:pk>/", publication_set_paid, name="publication_set_paid"),
+    path("set_user_is_publisher/<int:pk>/", set_user_is_publisher, name="set_user_is_publisher"),
 
     path("publisher/", cache_page(10)(PublisherListView.as_view()), name="publisher_list"),  # TODO: add search functionality!
     path("publisher/create/",cache_page(10)(PublisherCreateView.as_view()), name="publisher_create"),

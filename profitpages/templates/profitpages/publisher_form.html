@@ -17,7 +17,12 @@
             {% csrf_token %}
             {{ form.media }}
             {{ form.as_p }}
+            {% if object %}
             <button type="submit" name="btn_save" class="btn btn-success mt-3">Сохранить</button>
+            <button type="submit" name="btn_save" class="btn btn- mt-3" href="{% url 'profitpages:set_user_is_publisher' object.pk %}">Сохранить</button>
+            {% else %}
+            <button type="submit" name="btn_save" class="btn btn-success mt-3">Сохранить</button>
+            {% endif %}
         </form>
     </div>
 </div>
