@@ -8,6 +8,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, UpdateView
+from rest_framework.generics import CreateAPIView
+from rest_framework.permissions import AllowAny
 
 from config.settings import DEBUG
 from profitpages.models import Subscription, Publication, Publisher
@@ -15,17 +17,12 @@ from profitpages.services import send_sms, send_auto_gen_password
 from users.forms import UserLoginForm, UserRegisterForm, UserProfileForm, UserResetPasswordForm, \
     UserResetPasswordConfirmForm
 from users.models import User, Payment
+from users.serializers import UserSerializer
 
 
 class CustomLoginRequiredMixin(LoginRequiredMixin, View):
     login_url = reverse_lazy("users:login")
     redirect_field_name = "redirect_to"
-
-
-class UserCreateView(CreateView):
-    model = User
-    success_url = reverse_lazy("users:login")
-    pass
 
 
 class UserLoginView(LoginView):
@@ -63,7 +60,16 @@ class SMSVerificationView(View):
             )
 
 
-class RegisterView(CreateView):
+class UserCreateAPIView(CreateAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    permission_classes = (AllowAny,)
+
+    def perform_create(self, serializer):
+        user = serializer.save(is_active=True)
+        user.set_password(user.password)
+        user.save()
+
     def get(self, request, **kwargs):
         if request.session.get("sms"):
             form = UserRegisterForm()

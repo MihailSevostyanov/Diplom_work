@@ -23,6 +23,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+    "django_filters",
+    "rest_framework",
+    "rest_framework_simplejwt",
     "django_ckeditor_5",
     'django_celery_beat',
     "corsheaders",
@@ -60,6 +63,22 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
+
+REST_FRAMEWORK = {
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "UPDATE_LAST_LOGIN": True,
+}
 
 DATABASES = {
     "default": {
@@ -266,7 +285,6 @@ STRIPE_WEBHOOK = os.getenv("STRIPE_WEBHOOK")
 
 PROSTOR_LOGIN = os.getenv("PROSTOR_LOGIN")
 PROSTOR_PASSWORD = os.getenv("PROSTOR_PASSWORD")
-
 
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",
