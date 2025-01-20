@@ -82,7 +82,7 @@
     </div>
     <div class="row g-5">
         {% if object.paid %}
-            {% if user.is_subscribed or user.is_superuser or user.is_staff%}
+            {% if user.is_subscribed or user.is_superuser or user.is_staff or object.publisher.user.pk == user.pk %}
             <h1 class="pb-4 mb-4 fst-italic border-bottom" style="text-align: center;">
                 {{ object.title }}
             </h1>

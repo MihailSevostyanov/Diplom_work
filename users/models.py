@@ -30,6 +30,7 @@ class User(AbstractUser):
         verbose_name="Дата создания профиля", auto_now_add=True, **NULLABLE
     )
     is_subscribed = models.BooleanField(default=False, verbose_name="Подписка")
+    is_publisher = models.BooleanField(default=False, verbose_name="Пользователь является автором")
 
     USERNAME_FIELD = "phone"
     REQUIRED_FIELDS = []

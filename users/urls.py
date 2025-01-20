@@ -9,7 +9,7 @@ from users.views import (
     RegisterView,
     payment_success,
     payment_cancel,
-    SMSVerificationView,
+    SMSVerificationView, ProfileView, ProfileUpdateView,
 )
 
 app_name = UsersConfig.name
@@ -21,4 +21,7 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(), name="logout"),
     path("register/", cache_page(120)(RegisterView.as_view()), name="register"),
     path("verify-sms/", SMSVerificationView.as_view(), name="sms_verification"),
+
+    path('profile/<int:pk>/', cache_page(10)(ProfileView.as_view()), name='profile'),
+    path('profile/update/<int:pk>/', cache_page(10)(ProfileUpdateView.as_view()), name='profile_update')
 ]
