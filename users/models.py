@@ -26,6 +26,7 @@ class User(AbstractUser):
         help_text="Введите номер телефона",
     )
     avatar = models.ImageField(upload_to="users/", verbose_name="Аватар", **NULLABLE)
+    token_verification = models.CharField(max_length=50, verbose_name='код верификации', **NULLABLE)
     created_at = models.DateField(
         verbose_name="Дата создания профиля", auto_now_add=True, **NULLABLE
     )

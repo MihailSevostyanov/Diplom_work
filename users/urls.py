@@ -1,4 +1,4 @@
-from django.contrib.auth.views import LogoutView
+from django.contrib.auth.views import LogoutView, PasswordResetDoneView, PasswordResetCompleteView
 from django.urls import path, include
 from django.views.decorators.cache import cache_page
 
@@ -9,7 +9,8 @@ from users.views import (
     RegisterView,
     payment_success,
     payment_cancel,
-    SMSVerificationView, ProfileView, ProfileUpdateView,
+    SMSVerificationView, ProfileView, ProfileUpdateView, UserPasswordResetView, user_auto_generate_password,
+    UserPasswordResetConfirmView,
 )
 
 app_name = UsersConfig.name
@@ -22,6 +23,17 @@ urlpatterns = [
     path("register/", cache_page(120)(RegisterView.as_view()), name="register"),
     path("verify-sms/", SMSVerificationView.as_view(), name="sms_verification"),
 
-    path('profile/<int:pk>/', cache_page(10)(ProfileView.as_view()), name='profile'),
-    path('profile/update/<int:pk>/', cache_page(10)(ProfileUpdateView.as_view()), name='profile_update')
+    path("profile/<int:pk>/", cache_page(10)(ProfileView.as_view()), name="profile"),
+    path("profile/update/<int:pk>/", cache_page(10)(ProfileUpdateView.as_view()), name="profile_update"),
+
+    path('password-reset/', UserPasswordResetView.as_view(), name='password_reset'),
+    path('password-reset/auto-generate/done/', user_auto_generate_password, name='password_reset_auto_generate_done'),
+    path('password-reset/done/', PasswordResetDoneView.as_view(template_name='users/password_reset_done.html'),
+         name='password_reset_done'),
+    path('password-reset-confirm/<uidb64>/<token>/', UserPasswordResetConfirmView.as_view(),
+         name='password_reset_confirm'),
+    path('password-reset-complete/',
+         PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'),
+         name='password_reset_complete'),
+
 ]

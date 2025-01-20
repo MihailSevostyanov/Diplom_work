@@ -3,7 +3,7 @@ from datetime import timezone
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetConfirmView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
@@ -11,8 +11,9 @@ from django.views.generic import CreateView, UpdateView
 
 from config.settings import DEBUG
 from profitpages.models import Subscription, Publication, Publisher
-from profitpages.services import send_sms
-from users.forms import UserLoginForm, UserRegisterForm, UserProfileForm
+from profitpages.services import send_sms, send_auto_gen_password
+from users.forms import UserLoginForm, UserRegisterForm, UserProfileForm, UserResetPasswordForm, \
+    UserResetPasswordConfirmForm
 from users.models import User, Payment
 
 
@@ -29,40 +30,6 @@ class UserCreateView(CreateView):
 
 class UserLoginView(LoginView):
     form_class = UserLoginForm
-
-
-class ProfileView(CustomLoginRequiredMixin, UpdateView):
-    model = User
-    form_class = UserProfileForm
-    success_url = reverse_lazy("users:profile")
-    template_name = "users/profile.html"
-
-    def get_context_data(self, **kwargs):
-
-        try:
-            if Subscription.objects.get(user=self.request.user):
-                subscribe_hide = True
-        except:
-            subscribe_hide = False
-
-        publisher = Publisher.objects.get(user=self.request.user)
-        publications = Publication.objects.filter(publisher=publisher)
-        last_publications = publications.order_by('-updated_at')[:2]
-
-        context = super().get_context_data(**kwargs)
-        context['publications'] = publications
-        context['last_publications'] = last_publications
-        context['subscribe_hide'] = subscribe_hide
-        return context
-
-
-class ProfileUpdateView(CustomLoginRequiredMixin, UpdateView):
-    model = User
-    form_class = UserProfileForm
-
-    def get_success_url(self):
-        return reverse_lazy('users:profile', kwargs={'pk': self.object.pk})
-
 
 
 class SMSVerificationView(View):
@@ -141,6 +108,61 @@ class RegisterView(CreateView):
         return render(
             request, "users/register.html", {"form": form, "sms_required": False}
         )
+
+
+class ProfileView(CustomLoginRequiredMixin, UpdateView):
+    model = User
+    form_class = UserProfileForm
+    success_url = reverse_lazy("users:profile")
+    template_name = "users/profile.html"
+
+    def get_context_data(self, **kwargs):
+
+        try:
+            if Subscription.objects.get(user=self.request.user):
+                subscribe_hide = True
+        except:
+            subscribe_hide = False
+
+        publisher = Publisher.objects.get(user=self.request.user)
+        publications = Publication.objects.filter(publisher=publisher)
+        last_publications = publications.order_by('-updated_at')[:2]
+
+        context = super().get_context_data(**kwargs)
+        context['publications'] = publications
+        context['last_publications'] = last_publications
+        context['subscribe_hide'] = subscribe_hide
+        return context
+
+
+class ProfileUpdateView(CustomLoginRequiredMixin, UpdateView):
+    model = User
+    form_class = UserProfileForm
+
+    def get_success_url(self):
+        return reverse_lazy('users:profile', kwargs={'pk': self.object.pk})
+
+
+class UserPasswordResetView(PasswordResetView):
+    form_class = UserResetPasswordForm
+    success_url = reverse_lazy('users:password_reset_done')
+    template_name = "users/password_reset_form.html"
+    email_template_name = "users/password_reset_email.html"
+
+
+class UserPasswordResetConfirmView(PasswordResetConfirmView):
+    form_class = UserResetPasswordConfirmForm
+    template_name = "users/password_reset_confirm.html"
+    success_url = reverse_lazy('users:password_reset_complete')
+
+
+def user_auto_generate_password(request):
+    context = {
+        "reset_message": "Новый пароль отправлен на почту"
+    }
+    if request.method == "POST":
+        send_auto_gen_password(request, context)
+    return render(request, "users/login.html", context)
 
 
 def payment_success(request):

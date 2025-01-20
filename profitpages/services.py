@@ -1,12 +1,18 @@
 import json
 import random
+import secrets
 
 import requests
 import stripe
+from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
 
 from config import settings
-from config.settings import DEBUG, STRIPE_API_KEY, PROSTOR_LOGIN, PROSTOR_PASSWORD
+from config.settings import DEBUG, STRIPE_API_KEY, PROSTOR_LOGIN, PROSTOR_PASSWORD, EMAIL_HOST_USER
 from smsaero import SmsAero
+
+from users.models import User
 
 
 def send_sms(phone):
@@ -26,6 +32,45 @@ def send_sms(phone):
     json_data = json.dumps(data)
     requests.post(post_url, data=json_data)
     return random_code
+
+def send_mail_reg(user, host):
+    token_verification = secrets.token_hex(16)
+    user.token_verification = token_verification
+    url = f"http://{host}/email-confirm/{user.token_verification}"
+    send_mail(
+        subject="Подверждение регистрации",
+        message=f"Подтвердите регистрацию, перейдя по ссылке\n{url}",
+        from_email=EMAIL_HOST_USER,
+        recipient_list=[user.email],
+        fail_silently=True,
+    )
+
+
+def email_confirm(request, token_verification):
+    user = get_object_or_404(User, token_verification=token_verification)
+    user.is_active = True
+    user.token_verification = None
+    user.save()
+    return redirect(reverse('users:login'))
+
+
+
+def send_auto_gen_password(request, context):
+    """
+    генерация и отправление нового пароля на почту
+    """
+    email = request.POST.get('email')
+    user = User.objects.get(email=email)
+    new_password = secrets.token_hex(8)
+    user.set_password(new_password)
+    user.save()
+    send_mail(
+        message=f"Ваш новый пароль - \n{new_password}",
+        subject="Новый пароль на платформе ProfitPages",
+        from_email=EMAIL_HOST_USER,
+        recipient_list=[user.email],
+        fail_silently=False,
+    )
 
 
 stripe.api_key = STRIPE_API_KEY

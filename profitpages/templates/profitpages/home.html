@@ -63,6 +63,7 @@
                            href="{% url 'users:login' %}">Войти</a>
                         <a type="button" class="btn btn-outline-primary"
                            href="{% url 'users:register' %}">Регистрация</a>
+                        </div>
                         <br>
                         {% else %}
                             {% if user.is_publisher %}
@@ -80,7 +81,6 @@
                                 <a type="button" class="btn btn-outline-info" href="{% url 'profitpages:publisher_create' %}">Стать
                                     автором</a>
                             {% endif %}
-                        {% endif %}
                         <a type="button" class="btn btn-outline-warning" href="{% url 'profitpages:main' %}">Все
                             публикации</a>
                         <a type="button" class="btn btn-outline-warning" href="{% url 'profitpages:publisher_list' %}">Все
@@ -100,6 +100,7 @@
                         <a type="button" class="btn btn-info" href="#">Моя подписка</a>
                         {% endif %}
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
