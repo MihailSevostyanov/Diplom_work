@@ -97,7 +97,7 @@
                         <a type="button" class="btn btn-info" href="{% url 'profitpages:subscription_create' %}">Приобрести
                             подписку</a>
                         {% else %}
-                        <a type="button" class="btn btn-info" href="#">Моя подписка</a>
+                        <a type="button" class="btn btn-info" href="{% url 'profitpages:subscription_detail' %}">Моя подписка</a>
                         {% endif %}
                     </div>
                     {% endif %}

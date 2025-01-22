@@ -16,7 +16,7 @@ from profitpages.views import (
     PublisherListView,
     buy_subscription,
     publication_set_paid,
-    my_webhook_view, set_user_is_publisher,
+    my_webhook_view, set_user_is_publisher, SubscriptionDetailView,
 )
 from users.views import payment_success, payment_cancel
 
@@ -29,8 +29,9 @@ urlpatterns = [
     path("publication/detail/<int:pk>/", cache_page(10)(PublicationDetailView.as_view()), name="publication_detail"),
     path("publication/update/<int:pk>/", cache_page(10)(PublicationUpdateView.as_view()), name="publication_update"),
     path("publication/delete/<int:pk>/", cache_page(10)(PublicationDeleteView.as_view()), name="publication_delete"),
-    path("author/<int:pk>/publications/", cache_page(10)(PublicationAuthorlistView.as_view()), name="publication_author"),
+    path("publications/author/<int:pk>/", cache_page(10)(PublicationAuthorlistView.as_view()), name="publication_author"),
 
+    path("subscription/", cache_page(10)(SubscriptionDetailView.as_view()), name="subscription_detail"),
     path("subscription/", cache_page(120)(buy_subscription), name="subscription_create"),
     path("webhooks/stripe/", my_webhook_view, name="stripe_webhook"),
     path("payment_success/", payment_success, name="payment_success"),

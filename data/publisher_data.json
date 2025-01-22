@@ -1,0 +1,56 @@
+[
+{
+  "model": "profitpages.publisher",
+  "pk": 1,
+  "fields": {
+    "nickname": "Im_kotik",
+    "description": "На этом канале вы можете посмотреть на забавных котиков",
+    "user": 1
+  }
+},
+{
+  "model": "profitpages.publisher",
+  "pk": 2,
+  "fields": {
+    "nickname": "Великий Гетсби",
+    "description": "Начинаем нашу вечеринку",
+    "user": 2
+  }
+},
+{
+  "model": "profitpages.publisher",
+  "pk": 4,
+  "fields": {
+    "nickname": "lindemann",
+    "description": "Рассказываю о буднях группы Раммштайн от лица вокалиста",
+    "user": 3
+  }
+},
+{
+  "model": "profitpages.publisher",
+  "pk": 6,
+  "fields": {
+    "nickname": "Ричард",
+    "description": "Записки Ричарда",
+    "user": 6
+  }
+},
+{
+  "model": "profitpages.publisher",
+  "pk": 12,
+  "fields": {
+    "nickname": "ТЕСТОВЫЙ",
+    "description": "ТЕСТОВОЕ ОПИСАНИЕ",
+    "user": 5
+  }
+},
+{
+  "model": "profitpages.publisher",
+  "pk": 13,
+  "fields": {
+    "nickname": "Буся - кошка мечты",
+    "description": "Я кошечка из вашей мечты, это мой новый профиль с OnlyFans",
+    "user": 7
+  }
+}
+]

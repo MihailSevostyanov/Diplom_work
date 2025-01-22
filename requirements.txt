@@ -32,6 +32,7 @@ executing==2.1.0
 greenlet==3.1.1
 idna==3.10
 inflection==0.5.1
+iniconfig==2.0.0
 ipython==8.31.0
 jedi==0.19.2
 kombu==5.4.2
@@ -45,6 +46,7 @@ phonenumbers==8.13.52
 phonenumberslite==8.13.52
 pillow==11.1.0
 platformdirs==4.3.6
+pluggy==1.5.0
 postgres==4.0
 prompt_toolkit==3.0.48
 psycopg==3.2.4
@@ -54,6 +56,8 @@ ptyprocess==0.7.0
 pure_eval==0.2.3
 Pygments==2.19.1
 PyJWT==2.10.1
+pytest==8.3.4
+pytest-cov==6.0.0
 python-crontab==3.2.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1

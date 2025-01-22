@@ -8,10 +8,7 @@ from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 
-from config import settings
 from config.settings import DEBUG, STRIPE_API_KEY, PROSTOR_LOGIN, PROSTOR_PASSWORD, EMAIL_HOST_USER
-from smsaero import SmsAero
-
 from users.models import User
 
 

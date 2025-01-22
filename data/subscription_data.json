@@ -1,0 +1,22 @@
+[
+{
+  "model": "profitpages.subscription",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "is_active": true,
+    "update_at": "2025-01-19T15:42:26.965Z",
+    "end_at": "2025-02-20T15:42:26Z"
+  }
+},
+{
+  "model": "profitpages.subscription",
+  "pk": 2,
+  "fields": {
+    "user": 7,
+    "is_active": true,
+    "update_at": "2025-01-19T22:30:17.089Z",
+    "end_at": "2026-01-21T22:30:02Z"
+  }
+}
+]
