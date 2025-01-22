@@ -86,10 +86,10 @@ DATABASES = {
         "NAME": os.getenv("POSTGRES_DB"),
         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
         "USER": os.getenv("POSTGRES_USER"),
-        # "HOST": os.getenv("POSTGRES_HOST"),
-        # "PORT": os.getenv("POSTGRES_PORT"),
-        "HOST": "localhost",
-        "PORT": "5432",
+        "HOST": os.getenv("POSTGRES_HOST"),
+        "PORT": os.getenv("POSTGRES_PORT"),
+        # "HOST": "localhost",
+        # "PORT": "5432",
     }
 }
 
@@ -298,14 +298,15 @@ CSRF_TRUSTED_ORIGINS = [
 CELERY_BROKER_URI = "redis://localhost:6379/0"
 CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+CELERY_TASK_DEFAULT_QUEUE = 'profitpages'
 
 CELERY_BEAT_SCHEDULE = {
     'check_subscriptions': {
-        'task': 'main_app.tasks.check_subscriptions',
+        'task': 'profitpages.tasks.check_subscriptions',
         'schedule': timedelta(days=1),
     },
     'clear_residual_payments': {
-        'task': 'main_app.tasks.clear_residual_payments',
+        'task': 'profitpages.tasks.clear_residual_payments',
         'schedule': timedelta(days=2),
     },
 }

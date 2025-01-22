@@ -107,12 +107,9 @@ class PublisherCreateView(CreateView):
     template_name = "profitpages/publisher_form.html"
     success_url = reverse_lazy("profitpages:main")
 
-
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
-
-
 
 
 class PublisherDetailView(DetailView):
@@ -136,6 +133,14 @@ class PublisherDeleteView(DeleteView):
 
     def get_success_url(self):
         return reverse_lazy("profitpages:main")
+
+
+class SubscriptionDetailView(DetailView):
+    model = Subscription
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
 
 
 def upload_file(request):

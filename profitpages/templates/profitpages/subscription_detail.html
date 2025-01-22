@@ -1,0 +1,31 @@
+{% extends 'profitpages/base.html' %}
+{% load my_tags %}
+{% load static %}
+{% block content %}
+<div class="container col-10">
+    <div class="modal modal-sheet position-static d-block bg-body-secondary p-0 py-md-6" tabindex="-1" role="dialog"
+         id="modalChoice">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content rounded-3 shadow">
+                <div class="modal-header">
+                    Информация о вашей подписке
+                </div>
+                <div class="modal-body p-2">
+                    {% if object.is_active %}
+                    <h5>Подписка активна</h5>
+                    <p>Дата обновления: {{ object.update_at }}</p>
+                    <p>Окончание подписки: {{ object.end_at }}</p>
+                    {% else %}
+                    <h5>Подписка неактивна</h5>
+                </div>
+                <div class="modal-footer p-2">
+                    <div class="d-grid gap-2 d-md-block">
+                        <a href="{% url 'profitpages:main' object.pk %}" class="btn btn-outline-warning">На главную</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
